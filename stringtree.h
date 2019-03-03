@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <iostream>
 #include <functional>
+#include <stdexcept>
 
 class StringNode
 {
@@ -123,6 +124,33 @@ inline std::string PrintTree( const StringNode* node, int indent = 0)
         out += PrintTree( child.second, indent+3);
     }
     return out;
+}
+
+inline bool CloneBranch(const StringNode* source_leaf, StringNode* destination_root)
+{
+    const StringNode* branch_array[16];
+    int index = 0;
+    const StringNode* src_node = source_leaf;
+    while(src_node != nullptr)
+    {
+        branch_array[index++] = src_node;
+        src_node = src_node->parent();
+    }
+    const size_t array_size = static_cast<size_t>(index);
+    index --;
+    if( branch_array[index]->value() != destination_root->value() )
+    {
+        return false;
+    }
+    index--;
+
+    StringNode* dst_node = destination_root;
+    while( index >= 0 )
+    {
+        dst_node = dst_node->addChild( branch_array[index]->value() );
+        index--;
+    }
+    return true;
 }
 
 
